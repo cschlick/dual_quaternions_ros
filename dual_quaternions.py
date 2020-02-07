@@ -32,12 +32,18 @@ class DualQuaternion(object):
     """
 
     def __init__(self, q_r, q_d, normalize=False):
+
+
+
         if not isinstance(q_r, np.quaternion) or not isinstance(q_d, np.quaternion):
-            raise ValueError("q_r and q_d must be of type np.quaternion. Instead received: {} and {}".format(
-                type(q_r), type(q_d)))
+            if (q_r.dtype != np.quaternion) and (q_d.dtype != np.quaternion):
+                print(q_r.dtype)
+                raise ValueError("q_r and q_d must be of type np.quaternion. Instead received: {} and {}".format(type(q_r), type(q_d)))
         if normalize:
-            self.q_d = q_d / q_r.norm()
-            self.q_r = q_r.normalized()
+
+            self.q_d = q_d / np.array([q.norm() for q in q_r],copy=False)
+            self.q_r = np.array([q.normalized() for q in q_r],copy=False)
+
         else:
             self.q_r = q_r
             self.q_d = q_d
